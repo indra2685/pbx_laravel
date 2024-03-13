@@ -63,6 +63,6 @@ Route::middleware('auth:sanctum')->group(function () {
     // Dialer audio api
     Route::get('audio/get/{uid?}', [DialerAudioController::class, 'index']);
     Route::post('audio/store', [DialerAudioController::class, 'store']);
-    Route::post('audio/update/{name}', [DialerAudioController::class, 'update']);
-    Route::delete('audio/delete/{name}', [DialerAudioController::class, 'delete']);
+    Route::post('audio/update/{id}', [DialerAudioController::class, 'update']);
+    Route::delete('audio/delete/{id}', [DialerAudioController::class, 'delete']);
 });
