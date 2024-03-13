@@ -5,7 +5,7 @@
 /public/storage
 /storage/*.key
 /vendor
-/vender/
+/vendor/
 /vendor/*
 /storage
 /storage/
