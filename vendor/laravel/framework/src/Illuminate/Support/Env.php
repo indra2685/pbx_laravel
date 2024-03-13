@@ -1,3 +1,6 @@
+<?php
+
+namespace Illuminate\Support;
 
 use Dotenv\Repository\Adapter\PutenvAdapter;
 use Dotenv\Repository\RepositoryBuilder;
