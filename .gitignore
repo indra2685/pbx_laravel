@@ -8,6 +8,9 @@
 /vendor/
 /vendor/*
 /storage
+storage
+storage/
+storage/*
 /storage/
 /storage/*
 .env
