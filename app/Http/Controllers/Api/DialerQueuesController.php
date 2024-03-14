@@ -186,4 +186,15 @@ class DialerQueuesController extends Controller
             ], 500);
         }
     }
+    public function count_member($name){
+echo "hello";
+die;
+        $queues_name = Dialer_queues_member::where('queue_name', 'LIKE', $name)->get();
+
+        return response()->json([
+            'status' => true,
+            'data' => $queues_name,
+            'message' => "Queues_member Successfully counted.",
+        ]);
+    }
 }
