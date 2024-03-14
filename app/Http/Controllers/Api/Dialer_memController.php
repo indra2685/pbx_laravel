@@ -64,6 +64,7 @@ class Dialer_memController extends Controller
 
         $dialer_member_sippeers              = new Sippeers();
         $dialer_member_sippeers->id_member   = $dialer_member->id;
+        $dialer_member_sippeers->id_parent   = \Auth::user()->id;
         $dialer_member_sippeers->name        = $request->extension;
         $dialer_member_sippeers->defaultuser = $request->extension;
         $dialer_member_sippeers->secret      = $request->exte_pass;
@@ -172,5 +173,20 @@ class Dialer_memController extends Controller
                 'message' => "Dialer member id not found.",
             ], 500);
         }
+    }
+    public function sippeers_get($uid = null)
+    {
+        if (!empty($uid)) {
+            $sippeers = User::where('uid', '=', $uid)->first();
+            $user = $sippeers->id;
+        } else {
+            $user = auth()->user()->id;
+        }
+        $sippeers_get = Sippeers::where('id_parent', '=', $user)->with('member_name')->get();
+        return response()->json([
+            'status' => true,
+            'data' => $sippeers_get,
+            'message' => "Sippeers Successfully Get.",
+        ]);
     }
 }

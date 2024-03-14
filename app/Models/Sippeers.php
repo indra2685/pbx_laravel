@@ -10,7 +10,7 @@ class Sippeers extends Model
     use HasFactory;
     protected $table = 'sippeers';
     protected $fillable = [
-        'id',
+        'id_parent',
         'id_member',
         'name',
         'ipaddr',
@@ -102,4 +102,8 @@ class Sippeers extends Model
         'created_by',
         'supportpath'
     ];
+
+    public function member_name() {
+        return $this->hasOne('App\Models\Dialer_member', 'id', 'id_member');
+    }
 }

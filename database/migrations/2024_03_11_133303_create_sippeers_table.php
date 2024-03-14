@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('sippeers', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->integer('id_parent');
             $table->integer('id_member');
             $table->string('name', 40);
             $table->string('ipaddr', 45)->nullable();

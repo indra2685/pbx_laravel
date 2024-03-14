@@ -21,6 +21,12 @@ class DialerQueuesController extends Controller
             $user = auth()->user()->id;
         }
         $queues = Dialer_queues::where('id_parent', '=', $user)->get();
+        $queues_name='';
+        foreach($queues as $q){
+            $qu = $q->name;
+            $queues_name = Dialer_queues_member::where('queue_name', 'LIKE', $qu)->count();
+            $q['member_count'] = $queues_name;
+        }
 
         return response()->json([
             'status' => true,
@@ -186,15 +192,21 @@ class DialerQueuesController extends Controller
             ], 500);
         }
     }
-    public function count_member($name){
-echo "hello";
-die;
-        $queues_name = Dialer_queues_member::where('queue_name', 'LIKE', $name)->get();
+    public function count_member($name)
+    {
+        $queues_name = Dialer_queues_member::where('queue_name', 'LIKE', $name)->count();
 
-        return response()->json([
-            'status' => true,
-            'data' => $queues_name,
-            'message' => "Queues_member Successfully counted.",
-        ]);
+        if (!empty($queues_name)) {
+            return response()->json([
+                'status' => true,
+                'data' => $queues_name,
+                'message' => "Queues_member Successfully counted.",
+            ]);
+        } else {
+            return response()->json([
+                'status' => true,
+                'message' => "Queues name not found.",
+            ], 500);
+        }
     }
 }

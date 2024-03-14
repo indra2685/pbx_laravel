@@ -10,7 +10,6 @@ class Dialer_member extends Model
     use HasFactory;
     protected $table = 'dialer_member';
     protected $fillable = [
-        'id',
     	'id_parent',
     	'name',
         'username',

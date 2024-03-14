@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\DialerCalleridController;
 use App\Http\Controllers\Api\DialerQueuesController;
 use App\Http\Controllers\Api\DialerAudioController;
+use App\Http\Controllers\Api\Queues_FilterController;
 
 /*
 |--------------------------------------------------------------------------
@@ -47,6 +48,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('member/store', [Dialer_memController::class, 'store']);
     Route::post('member/update/{id}', [Dialer_memController::class, 'update']);
     Route::delete('member/delete/{id}', [Dialer_memController::class, 'delete']);
+    Route::get('sippeers/get/{uid?}', [Dialer_memController::class, 'sippeers_get']);
 
     // Dialer Caller-id api
     Route::get('caller-id/get/{uid?}', [DialerCalleridController::class, 'index']);
@@ -66,4 +68,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('audio/store', [DialerAudioController::class, 'store']);
     Route::post('audio/update/{id}', [DialerAudioController::class, 'update']);
     Route::delete('audio/delete/{id}', [DialerAudioController::class, 'delete']);
+
+    // Dialer queues_filter api
+    Route::get('queues_filter/get/{uid?}', [Queues_FilterController::class, 'index']);
+    Route::post('queues_filter/store', [Queues_FilterController::class, 'store']);
+    Route::post('queues_filter/update/{id}', [Queues_FilterController::class, 'update']);
+    Route::delete('queues_filter/delete/{id}', [Queues_FilterController::class, 'delete']);
 });
