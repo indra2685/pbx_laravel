@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Ramsey\Uuid\Uuid;
+use Illuminate\Support\Str;
 
 
 class RegisterController extends BaseController
@@ -65,7 +66,8 @@ class RegisterController extends BaseController
     {
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
             $user = Auth::user();
-            $success['token'] =  $user->createToken('MyApp')->plainTextToken;
+            // $success['token'] =  $user->createToken('MyApp')->plainTextToken;
+            $success['tokens'] = Str::random(1000);
             $success['name'] =  $user->name;
 
             return $this->sendResponse($success, 'User login successfully.');
