@@ -21,34 +21,40 @@ class RegisterController extends BaseController
     public function register(Request $request)
     {
         if (Auth::check()) {
+            if (Auth::user()->role == 'ADMIN') {
+                $validator = Validator::make($request->all(), [
+                    'name' => 'required',
+                    'email' => 'required|email',
+                    'password' => 'required',
+                    'c_password' => 'required|same:password',
+                ]);
 
-            $validator = Validator::make($request->all(), [
-                'name' => 'required',
-                'email' => 'required|email',
-                'password' => 'required',
-                'c_password' => 'required|same:password',
-            ]);
+                if ($validator->fails()) {
+                    return $this->sendError('Validation Error.', $validator->errors());
+                }
 
-            if ($validator->fails()) {
-                return $this->sendError('Validation Error.', $validator->errors());
+                $input = $request->all();
+                $input['password'] = bcrypt($input['password']);
+                $input['role'] = "MANAGER";
+                $input['uid'] = Uuid::uuid4()->toString();
+                $input['created_by'] = auth()->user()->id;
+                $user = User::create($input);
+                // $success['token'] =  $user->createToken('MyApp')->plainTextToken;
+                // $success['name'] =  $user->name;
+
+                // return $this->sendResponse($success, 'User register successfully.');
+
+                return response()->json([
+                    'status' => true,
+                    "data" => $user,
+                    'message' => "User register successfully.",
+                ]);
+            } else {
+                return response()->json([
+                    'status' => true,
+                    'message' => "Only Admin can create.",
+                ]);
             }
-
-            $input = $request->all();
-            $input['password'] = bcrypt($input['password']);
-            $input['role'] = "MANAGER";
-            $input['uid'] = Uuid::uuid4()->toString();
-            $input['created_by'] = auth()->user()->id;
-            $user = User::create($input);
-            // $success['token'] =  $user->createToken('MyApp')->plainTextToken;
-            // $success['name'] =  $user->name;
-
-            // return $this->sendResponse($success, 'User register successfully.');
-
-            return response()->json([
-                'status' => true,
-                "data" => $user,
-                'message' => "User register successfully.",
-            ]);
         } else {
             return response()->json([
                 'status' => true,
@@ -66,8 +72,7 @@ class RegisterController extends BaseController
     {
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
             $user = Auth::user();
-            // $success['token'] =  $user->createToken('MyApp')->plainTextToken;
-            $success['tokens'] = Str::random(1000);
+            $success['token'] =  $user->createToken('MyApp')->plainTextToken;
             $success['name'] =  $user->name;
 
             return $this->sendResponse($success, 'User login successfully.');

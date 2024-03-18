@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\DialerCalleridController;
 use App\Http\Controllers\Api\DialerQueuesController;
 use App\Http\Controllers\Api\DialerAudioController;
 use App\Http\Controllers\Api\Queues_FilterController;
+use App\Http\Controllers\Api\DialerRoutingController;
 
 /*
 |--------------------------------------------------------------------------
@@ -74,4 +75,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('queues_filter/store', [Queues_FilterController::class, 'store']);
     Route::post('queues_filter/update/{id}', [Queues_FilterController::class, 'update']);
     Route::delete('queues_filter/delete/{id}', [Queues_FilterController::class, 'delete']);
+
+     // Dialer routing api
+     Route::get('routing/get/{uid?}', [DialerRoutingController::class, 'index']);
+     Route::get('routing/show/{id}', [DialerRoutingController::class, 'show']);
+     Route::post('routing/store', [DialerRoutingController::class, 'store']);
+     Route::post('routing/update/{id}', [DialerRoutingController::class, 'update']);
+     Route::post('routing/status_update/{id}', [DialerRoutingController::class, 'status_update']);
+     Route::delete('routing/delete/{id}', [DialerRoutingController::class, 'delete']);
 });
