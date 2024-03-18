@@ -25,11 +25,7 @@ yarn-error.log
 /.fleet
 /.idea
 /.vscode
-
-storage/framework/cache/data/52/ac/52acebe9de48b9434598fa65d2ec8d0e111e90b0
-storage/framework/cache/data/58/d6/58d6ccc046008c0a3f9871a57c227d29ac500c36
-storage/framework/cache/data/70/d5/70d5789fb8fa04f157e2f175d8e9158bc3d2b5c6
-storage/framework/cache/data/c0/71/c071422490d526a8aada046adf3a9c9fa0593468
-storage/framework/cache/data/df/2d/df2d2d2b631648c7ad8909bc65a5a53634e59125
-storage/framework/cache/data/ec/c4/ecc49f49f4da6b940dcde13f0571e79c299871e6
+storage/framework/*
+storage/framework/
+storage/framework
 storage/logs/laravel.log
