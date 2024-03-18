@@ -26,6 +26,16 @@ class Dialer_memController extends Controller
             'message' => "Member Successfully Get.",
         ]);
     }
+    public function show($id)
+    {
+        $member = Dialer_member::find($id);
+
+        return response()->json([
+            'status' => true,
+            'data' => $member,
+            'message' => "Member Successfully Get.",
+        ]);
+    }
 
     public function store(Request $request)
     {
@@ -186,6 +196,16 @@ class Dialer_memController extends Controller
         return response()->json([
             'status' => true,
             'data' => $sippeers_get,
+            'message' => "Sippeers Successfully Get.",
+        ]);
+    }
+
+    public function sippeers_show($id)
+    {
+        $sippeers = Sippeers::find($id);
+        return response()->json([
+            'status' => true,
+            'data' => $sippeers,
             'message' => "Sippeers Successfully Get.",
         ]);
     }

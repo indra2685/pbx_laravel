@@ -28,6 +28,16 @@ class DialerAudioController extends Controller
             'message' => "Audio Successfully Get.",
         ]);
     }
+    public function show($id)
+    {
+        $audio = Dialer_audio::find($id);
+
+        return response()->json([
+            'status' => true,
+            'data' => $audio,
+            'message' => "Audio Successfully Get.",
+        ]);
+    }
     public function store(Request $request)
     {
 

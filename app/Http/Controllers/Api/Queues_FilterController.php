@@ -26,6 +26,17 @@ class Queues_FilterController extends Controller
         ]);
     }
 
+    public function show($id)
+    {
+        $queues_filetr = Queue_filter::find($id);
+
+        return response()->json([
+            'status' => true,
+            'data' => $queues_filetr,
+            'message' => "Queues_filter Successfully Get.",
+        ]);
+    }
+
     public function store(Request $request)
     {
         $rules = [

@@ -18,11 +18,21 @@ class DialerCalleridController extends Controller
         } else {
             $user = auth()->user()->id;
         }
-        $member = Dialer_callerid::where('id_parent', '=', $user)->get();
+        $callers = Dialer_callerid::where('id_parent', '=', $user)->get();
         return response()->json([
             'status' => true,
-            'data' => $member,
-            'message' => "Member Successfully Get.",
+            'data' => $callers,
+            'message' => "caller-id Successfully Get.",
+        ]);
+    }
+    public function show($id)
+    {
+        $caller = Dialer_callerid::find($id);
+
+        return response()->json([
+            'status' => true,
+            'data' => $caller,
+            'message' => "caller-id Successfully Get.",
         ]);
     }
     public function store(Request $request)

@@ -34,6 +34,16 @@ class DialerQueuesController extends Controller
             'message' => "Queues Successfully Get.",
         ]);
     }
+    public function show($name)
+    {
+        $queues_name = Dialer_queues_member::where('queue_name', 'LIKE', $name)->first();
+
+        return response()->json([
+            'status' => true,
+            'data' => $queues_name,
+            'message' => "Queues Successfully Get.",
+        ]);
+    }
 
     public function store(Request $request)
     {

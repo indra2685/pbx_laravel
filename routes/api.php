@@ -46,19 +46,23 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Dialer Member
     Route::get('member/get/{uid?}', [Dialer_memController::class, 'index']);
+    Route::get('member/show/{id}', [Dialer_memController::class, 'show']);
     Route::post('member/store', [Dialer_memController::class, 'store']);
     Route::post('member/update/{id}', [Dialer_memController::class, 'update']);
     Route::delete('member/delete/{id}', [Dialer_memController::class, 'delete']);
     Route::get('sippeers/get/{uid?}', [Dialer_memController::class, 'sippeers_get']);
+    Route::get('sippeers/show/{id}', [Dialer_memController::class, 'sippeers_show']);
 
     // Dialer Caller-id api
     Route::get('caller-id/get/{uid?}', [DialerCalleridController::class, 'index']);
+    Route::get('caller-id/show/{id}', [DialerCalleridController::class, 'show']);
     Route::post('caller-id/store', [DialerCalleridController::class, 'store']);
     Route::post('caller-id/update/{id}', [DialerCalleridController::class, 'update']);
     Route::delete('caller-id/delete/{id}', [DialerCalleridController::class, 'delete']);
 
     // Dialer queues api
     Route::get('queues/get/{uid?}', [DialerQueuesController::class, 'index']);
+    Route::get('queues/show/{id}', [DialerQueuesController::class, 'show']);
     Route::post('queues/store', [DialerQueuesController::class, 'store']);
     Route::post('queues/update/{name}', [DialerQueuesController::class, 'update']);
     Route::delete('queues/delete/{name}', [DialerQueuesController::class, 'delete']);
@@ -66,12 +70,14 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Dialer audio api
     Route::get('audio/get/{uid?}', [DialerAudioController::class, 'index']);
+    Route::get('audio/show/{id}', [DialerAudioController::class, 'show']);
     Route::post('audio/store', [DialerAudioController::class, 'store']);
     Route::post('audio/update/{id}', [DialerAudioController::class, 'update']);
     Route::delete('audio/delete/{id}', [DialerAudioController::class, 'delete']);
 
     // Dialer queues_filter api
     Route::get('queues_filter/get/{uid?}', [Queues_FilterController::class, 'index']);
+    Route::get('queues_filter/show/{id}', [Queues_FilterController::class, 'show']);
     Route::post('queues_filter/store', [Queues_FilterController::class, 'store']);
     Route::post('queues_filter/update/{id}', [Queues_FilterController::class, 'update']);
     Route::delete('queues_filter/delete/{id}', [Queues_FilterController::class, 'delete']);
