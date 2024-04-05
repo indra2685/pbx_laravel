@@ -24,6 +24,7 @@ class Dialer_member extends Model
         'email',
         'created_by'
     ];
+   
 
 
 }

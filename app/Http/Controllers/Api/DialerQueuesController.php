@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers\Api;
 
-use Illuminate\Http\Request;
 use App\Models\User;
-use App\Models\Dialer_queues;
+use Illuminate\Http\Request;
 use App\Models\Dialer_member;
-use App\Models\Dialer_queues_member;
+use App\Models\Dialer_queues;
+use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
+use App\Models\Dialer_queues_member;
 use Illuminate\Support\Facades\Validator;
 
 class DialerQueuesController extends Controller
@@ -21,8 +22,8 @@ class DialerQueuesController extends Controller
             $user = auth()->user()->id;
         }
         $queues = Dialer_queues::where('id_parent', '=', $user)->get();
-        $queues_name='';
-        foreach($queues as $q){
+        $queues_name = '';
+        foreach ($queues as $q) {
             $qu = $q->name;
             $queues_name = Dialer_queues_member::where('queue_name', 'LIKE', $qu)->count();
             $q['member_count'] = $queues_name;
@@ -62,55 +63,64 @@ class DialerQueuesController extends Controller
                 'error' => $messages,
             ], 500);
         }
+        try {
+            $_members = Dialer_member::whereIn('id', $request->selectedMemberId)->pluck('name')->toArray();
 
-        $_members = Dialer_member::whereIn('id', $request->member)->pluck('name')->toArray();
+            $member = [];
+            $queues                 = new Dialer_queues();
+            $queues->name           = $request->name;
+            $queues['member']       = implode(',', $_members);
+            $queues->ivr_message    = $request->ivr_message;
+            $queues->strategy       = $request->strategy;
+            $queues->extension      = $request->extension;
+            $queues->moh_pro        = $request->moh_pro;
+            $queues->id_parent      = \Auth::user()->id;
+            $queues->langugae       = $request->langugae;
+            $queues->gree_pro       = $request->gree_pro;
+            $queues->timeout        = $request->timeout;
+            $queues->recording      = $request->recording;
+            $queues->dis_coller     = $request->dis_coller;
+            $queues->exit_no_agent  = $request->exit_no_agent;
+            $queues->ply_posi       = $request->ply_posi;
+            $queues->ply_posi_peri  = $request->ply_posi_peri;
+            $queues->auto_ans       = $request->auto_ans;
+            $queues->call_back      = $request->call_back;
+            $queues->per_ann        = $request->per_ann;
+            $queues->per_ann_pro    = $request->per_ann_pro;
+            $queues->created_by     = \Auth::user()->created_by;
 
-        $member = [];
-        $queues                 = new Dialer_queues();
-        $queues->name           = $request->name;
-        $queues['member']       = implode(',', $_members);
-        $queues->ivr_message    = $request->ivr_message;
-        $queues->strategy       = $request->strategy;
-        $queues->moh_pro        = $request->moh_pro;
-        $queues->id_parent      = \Auth::user()->id;
-        $queues->langugae       = $request->langugae;
-        $queues->gree_pro       = $request->gree_pro;
-        $queues->timeout        = $request->timeout;
-        $queues->recording      = $request->has('recording') ? 1 : 0;
-        $queues->dis_coller     = $request->has('dis_coller') ? 1 : 0;
-        $queues->exit_no_agent  = $request->has('exit_no_agent') ? 1 : 0;
-        $queues->ply_posi       = $request->has('ply_posi') ? 1 : 0;
-        $queues->ply_posi_peri  = $request->has('ply_posi_peri') ? 1 : 0;
-        $queues->auto_ans       = $request->has('auto_ans') ? 1 : 0;
-        $queues->call_back      = $request->has('call_back') ? 1 : 0;
-        $queues->per_ann        = $request->per_ann;
-        $queues->per_ann_pro    = $request->per_ann_pro;
-        $queues->created_by     = \Auth::user()->created_by;
+            $queues->save();
 
-        $queues->save();
+            foreach ($request->selectedMemberId as $member) {
 
-        foreach ($request->member as $member) {
-
-            $dialer_member = Dialer_member::find($member);
-            if ($dialer_member != null) {
-                $queues_mem = new Dialer_queues_member;
-                $queues_mem->queue_name = $queues->name;
-                $queues_mem->membername = $dialer_member->name;
-                $queues_mem->interface  = 'SIP/' . $dialer_member->extension;
-                $queues_mem->created_by = \Auth::user()->created_by;
-                $queues_mem->save();
+                $dialer_member = Dialer_member::find($member);
+                if ($dialer_member != null) {
+                    $queues_mem = new Dialer_queues_member;
+                    $queues_mem->queue_name = $queues->name;
+                    $queues_mem->membername = $dialer_member->name;
+                    $queues_mem->interface  = 'SIP/' . $dialer_member->extension;
+                    $queues_mem->created_by = \Auth::user()->created_by;
+                    $queues_mem->save();
+                }
             }
-        }
 
-        return response()->json([
-            'status' => true,
-            'data' => $queues,
-            'message' => "queues Successfully Created.",
-        ]);
+            return response()->json([
+                'status' => true,
+                'data' => $queues,
+                'message' => "queues Successfully Created.",
+            ]);
+        } catch (\Exception $e) {
+            $rorf = Log::error('' . $e->getMessage());
+            return response()->json([
+                'status' => true,
+                'message' => $e,
+            ], 500);
+        }
     }
 
     public function update(Request $request, $name)
     {
+        // dd($request->all());
         $queues = Dialer_queues::where('name', 'like', $name)->first();
         Dialer_queues_member::where('queue_name', 'like', $name)->delete();
         if (!empty($queues)) {
@@ -129,46 +139,52 @@ class DialerQueuesController extends Controller
                     'error' => $messages,
                 ], 500);
             }
+            try {
+                $_members = Dialer_member::whereIn('id', $request->selectedMemberId)->pluck('name')->toArray();
 
-            $_members = Dialer_member::whereIn('id', $request->member)->pluck('name')->toArray();
-
-            $member = [];
-            $queues->name           = $request->name;
-            $queues['member']       = implode(',', $_members);
-            $queues->ivr_message    = $request->ivr_message;
-            $queues->strategy       = $request->strategy;
-            $queues->moh_pro        = $request->moh_pro;
-            $queues->langugae       = $request->langugae;
-            $queues->gree_pro       = $request->gree_pro;
-            $queues->timeout        = $request->timeout;
-            $queues->recording      = $request->has('recording') ? 1 : 0;
-            $queues->dis_coller     = $request->has('dis_coller') ? 1 : 0;
-            $queues->exit_no_agent  = $request->has('exit_no_agent') ? 1 : 0;
-            $queues->ply_posi       = $request->has('ply_posi') ? 1 : 0;
-            $queues->ply_posi_peri  = $request->has('ply_posi_peri') ? 1 : 0;
-            $queues->auto_ans       = $request->has('auto_ans') ? 1 : 0;
-            $queues->call_back      = $request->has('call_back') ? 1 : 0;
-            $queues->per_ann        = $request->per_ann;
-            $queues->per_ann_pro    = $request->per_ann_pro;
-            $queues->save();
+                $member = [];
+                $queues->name           = $request->name;
+                $queues['member']       = implode(',', $_members);
+                $queues->ivr_message    = $request->ivr_message;
+                $queues->strategy       = $request->strategy;
+                $queues->moh_pro        = $request->moh_pro;
+                $queues->langugae       = $request->langugae;
+                $queues->gree_pro       = $request->gree_pro;
+                $queues->timeout        = $request->timeout;
+                $queues->recording      = $request->recording;
+                $queues->dis_coller     = $request->dis_coller;
+                $queues->exit_no_agent  = $request->exit_no_agent;
+                $queues->ply_posi       = $request->ply_posi;
+                $queues->ply_posi_peri  = $request->ply_posi_peri;
+                $queues->auto_ans       = $request->auto_ans;
+                $queues->call_back      = $request->call_back;
+                $queues->per_ann        = $request->per_ann;
+                $queues->per_ann_pro    = $request->per_ann_pro;
+                $queues->save();
 
 
-            foreach ($request->member as $member) {
-                $dialer_member = Dialer_member::find($member);
-                if ($dialer_member != null) {
-                    $queues_mem = new Dialer_queues_member;
-                    $queues_mem->queue_name  = $queues->name;
-                    $queues_mem->membername = $dialer_member->name;
-                    $queues_mem->interface = 'SIP/' . $dialer_member->extension;
-                    $queues_mem->created_by = \Auth::user()->created_by;
-                    $queues_mem->save();
+                foreach ($request->selectedMemberId as $member) {
+                    $dialer_member = Dialer_member::find($member);
+                    if ($dialer_member != null) {
+                        $queues_mem = new Dialer_queues_member;
+                        $queues_mem->queue_name  = $queues->name;
+                        $queues_mem->membername = $dialer_member->name;
+                        $queues_mem->interface = 'SIP/' . $dialer_member->extension;
+                        $queues_mem->created_by = \Auth::user()->created_by;
+                        $queues_mem->save();
+                    }
                 }
+                return response()->json([
+                    'status' => true,
+                    'data' => $queues,
+                    'message' => "queues Successfully Updated.",
+                ]);
+            } catch (\Exception $e) {
+                return response()->json([
+                    'status' => true,
+                    'message' => $e,
+                ], 500);
             }
-            return response()->json([
-                'status' => true,
-                'data' => $queues,
-                'message' => "queues Successfully Updated.",
-            ]);
         } else {
             return response()->json([
                 'status' => true,

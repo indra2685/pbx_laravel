@@ -40,9 +40,9 @@ class Dialer_memController extends Controller
     public function store(Request $request)
     {
         $rules = [
-            // 'name' => 'required',
-            // 'extension' =>'required|max:5|min:5',
-            // 'email' => 'required|email',
+            'name' => 'required',
+            'password' =>'required',
+            'username' => 'required'
         ];
 
         $validator = Validator::make($request->all(), $rules);

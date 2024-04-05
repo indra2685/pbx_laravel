@@ -40,7 +40,7 @@ class DialerAudioController extends Controller
     }
     public function store(Request $request)
     {
-
+        // dd($request->all());
         $rules = [
             'name' => 'required',
             'file_name' => 'required|file|mimes:audio/mpeg,mpga,mp3,wav,aac'
