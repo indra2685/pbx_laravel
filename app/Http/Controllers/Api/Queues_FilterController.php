@@ -17,7 +17,7 @@ class Queues_FilterController extends Controller
         } else {
             $user = auth()->user()->id;
         }
-        $queues_filetr = Queue_filter::where('id_parent', '=', $user)->with('queue_name')->get();
+        $queues_filetr = Queue_filter::where('id_parent', '=', $user)->with('queue_name')->orderBy('id', 'DESC')->get();
 
         return response()->json([
             'status' => true,

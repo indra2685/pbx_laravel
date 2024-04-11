@@ -21,12 +21,23 @@ class DialerQueuesController extends Controller
         } else {
             $user = auth()->user()->id;
         }
-        $queues = Dialer_queues::where('id_parent', '=', $user)->get();
+        $queues = Dialer_queues::where('id_parent', '=', $user)->with('audio_name')->orderBy('id', 'DESC')->get();
         $queues_name = '';
+        // $member_name = [];
         foreach ($queues as $q) {
             $qu = $q->name;
             $queues_name = Dialer_queues_member::where('queue_name', 'LIKE', $qu)->count();
             $q['member_count'] = $queues_name;
+            // $mem_name = json_decode($q->member, true);
+            // if (is_array($mem_name)) {
+            //     foreach ($mem_name as $q_id) {
+            //         $name = Dialer_member::where('id', $q_id)->first();
+            //         if ($name) {
+            //             $member_name[] = $name->name;
+            //         }
+            //     }
+            //     $q['member_name'] = $member_name;
+            // }
         }
 
         return response()->json([
@@ -70,6 +81,7 @@ class DialerQueuesController extends Controller
             $queues                 = new Dialer_queues();
             $queues->name           = $request->name;
             $queues['member']       = implode(',', $_members);
+            // $queues->member         = $request->selectedMemberId;
             $queues->ivr_message    = $request->ivr_message;
             $queues->strategy       = $request->strategy;
             $queues->extension      = $request->extension;
@@ -90,7 +102,7 @@ class DialerQueuesController extends Controller
             $queues->created_by     = \Auth::user()->created_by;
 
             $queues->save();
-
+            // $mem_str = json_decode($request->selectedMemberId);
             foreach ($request->selectedMemberId as $member) {
 
                 $dialer_member = Dialer_member::find($member);

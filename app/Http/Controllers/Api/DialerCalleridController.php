@@ -18,7 +18,7 @@ class DialerCalleridController extends Controller
         } else {
             $user = auth()->user()->id;
         }
-        $callers = Dialer_callerid::where('id_parent', '=', $user)->get();
+        $callers = Dialer_callerid::where('id_parent', '=', $user)->orderBy('id', 'DESC')->get();
         return response()->json([
             'status' => true,
             'data' => $callers,

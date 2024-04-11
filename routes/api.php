@@ -1,15 +1,17 @@
 <?php
 
-use App\Http\Controllers\Api\Dialer_memController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\RegisterController;
 use App\Http\Controllers\Api\UserController;
-use App\Http\Controllers\Api\DialerCalleridController;
-use App\Http\Controllers\Api\DialerQueuesController;
+use App\Http\Controllers\Api\AgentController;
+use App\Http\Controllers\Api\RegisterController;
+use App\Http\Controllers\Api\IpAddressController;
+use App\Http\Controllers\Api\Dialer_memController;
 use App\Http\Controllers\Api\DialerAudioController;
-use App\Http\Controllers\Api\Queues_FilterController;
+use App\Http\Controllers\Api\DialerQueuesController;
 use App\Http\Controllers\Api\DialerRoutingController;
+use App\Http\Controllers\Api\Queues_FilterController;
+use App\Http\Controllers\Api\DialerCalleridController;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,7 +30,7 @@ Route::post('login', [RegisterController::class, 'login']);
 
 Route::middleware('auth:sanctum')->get('/logout', function () {
     $user = auth()->user();
-    $user->tokens()->delete(); 
+    $user->tokens()->delete();
     return response()->json([
         'status' => true,
         'message' => "User Successfully Logout",
@@ -40,6 +42,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // User Api 
     Route::get('user/details/{uid?}', [UserController::class, 'getuser']);
+    Route::get('user/gets', [UserController::class, 'getallusers']);
     Route::post('user/update/{uid}', [UserController::class, 'update']);
     Route::post('password-reset', [UserController::class, 'updatePassword']);
     Route::delete('user/delete/{uid}', [UserController::class, 'delete']);
@@ -82,11 +85,21 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('queues_filter/update/{id}', [Queues_FilterController::class, 'update']);
     Route::delete('queues_filter/delete/{id}', [Queues_FilterController::class, 'delete']);
 
-     // Dialer routing api
-     Route::get('routing/get/{uid?}', [DialerRoutingController::class, 'index']);
-     Route::get('routing/show/{id}', [DialerRoutingController::class, 'show']);
-     Route::post('routing/store', [DialerRoutingController::class, 'store']);
-     Route::post('routing/update/{id}', [DialerRoutingController::class, 'update']);
-     Route::post('routing/status_update/{id}', [DialerRoutingController::class, 'status_update']);
-     Route::delete('routing/delete/{id}', [DialerRoutingController::class, 'delete']);
+    // Dialer routing api
+    Route::get('routing/get/{uid?}', [DialerRoutingController::class, 'index']);
+    Route::get('routing/show/{id}', [DialerRoutingController::class, 'show']);
+    Route::post('routing/store', [DialerRoutingController::class, 'store']);
+    Route::post('routing/update/{id}', [DialerRoutingController::class, 'update']);
+    Route::post('routing/status_update/{id}', [DialerRoutingController::class, 'status_update']);
+    Route::delete('routing/delete/{id}', [DialerRoutingController::class, 'delete']);
+
+    // Dialer Agent Report api
+    Route::get('cdr/report', [AgentController::class, 'get_class']);
+
+    // Dialer ip_address api
+    Route::get('ip_address/get/{uid?}', [IpAddressController::class, 'index']);
+    Route::get('ip_address/show/{id}', [IpAddressController::class, 'show']);
+    Route::post('ip_address/store', [IpAddressController::class, 'store']);
+    Route::post('ip_address/update/{id}', [IpAddressController::class, 'update']);
+    Route::delete('ip_address/delete/{id}', [IpAddressController::class, 'delete']);
 });

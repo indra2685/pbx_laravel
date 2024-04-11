@@ -87,4 +87,8 @@ class Dialer_queues extends Model
         'defaultrule',
         'timeoutpriority'
     ];
+
+    public function audio_name(){
+        return $this->hasOne(Dialer_audio::class,'id','ivr_message');
+    }
 }

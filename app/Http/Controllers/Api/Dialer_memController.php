@@ -19,7 +19,7 @@ class Dialer_memController extends Controller
         } else {
             $user = auth()->user()->id;
         }
-        $member = Dialer_member::where('id_parent', '=', $user)->get();
+        $member = Dialer_member::where('id_parent', '=', $user)->orderBy('id', 'DESC')->get();
         return response()->json([
             'status' => true,
             'data' => $member,
@@ -39,10 +39,11 @@ class Dialer_memController extends Controller
 
     public function store(Request $request)
     {
+        // dd($request->all());
         $rules = [
             'name' => 'required',
             'password' =>'required',
-            'username' => 'required'
+            'username' => 'required',
         ];
 
         $validator = Validator::make($request->all(), $rules);
@@ -64,10 +65,10 @@ class Dialer_memController extends Controller
         $dialer_member->extension      = $request->extension;
         $dialer_member->exte_pass      = $request->exte_pass;
         $dialer_member->ring_timeout   = $request->ring_timeout;
-        $dialer_member->dial_timeout   = $request->dial_timeout;
-        $dialer_member->voice_mail     = $request->voice_mail;
-        $dialer_member->vs_pass        = $request->vs_pass;
-        $dialer_member->email          = $request->email;
+        // $dialer_member->dial_timeout   = @$request->dial_timeout;
+        // $dialer_member->voice_mail     = @$request->voice_mail;
+        // $dialer_member->vs_pass        = @$request->vs_pass;
+        // $dialer_member->email          = @$request->email;
         $dialer_member->created_by     = \Auth::user()->created_by;
         $dialer_member->id_parent      = \Auth::user()->id;
         $dialer_member->save();
@@ -129,10 +130,10 @@ class Dialer_memController extends Controller
                 $member->extension      = $request->extension;
                 $member->exte_pass      = $request->exte_pass;
                 $member->ring_timeout   = $request->ring_timeout;
-                $member->dial_timeout   = $request->dial_timeout;
-                $member->voice_mail     = $request->voice_mail;
-                $member->vs_pass        = $request->vs_pass;
-                $member->email          = $request->email;
+                // $member->dial_timeout   = @$request->dial_timeout;
+                // $member->voice_mail     = @$request->voice_mail;
+                // $member->vs_pass        = @$request->vs_pass;
+                // $member->email          = @$request->email;
                 $member->save();
 
                 $sippeers->name           = $request->extension;

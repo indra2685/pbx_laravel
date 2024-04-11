@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use Illuminate\Http\Request;
 use App\Models\Dialer_Routing;
+use App\Models\Dialer_queues;
 use App\Models\User;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
@@ -18,7 +19,13 @@ class DialerRoutingController extends Controller
         } else {
             $user = auth()->user()->id;
         }
-        $routings = Dialer_Routing::where('id_parent', '=', $user)->get();
+        $routings = Dialer_Routing::where('id_parent', '=', $user)->orderBy('id', 'DESC')->get();
+        $queue_name = '';
+        foreach ($routings as $r) {
+            @$queue_id = Dialer_queues::where('id', '=', $r->queuq_id)->first();
+            @$queue_name = $queue_id->name;
+            $r['queue_name'] = $queue_name;
+        }
 
         return response()->json([
             'status' => true,

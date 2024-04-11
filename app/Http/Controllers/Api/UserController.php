@@ -28,6 +28,17 @@ class UserController extends Controller
         ]);
     }
 
+    public function getallusers()
+    {
+        $user = auth()->user()->id;
+        $user_details = User::where('created_by', '=', $user)->get();
+        return response()->json([
+            'status' => true,
+            'data' => $user_details,
+            'message' => "Successfully get user details."
+        ]);
+    }
+
     public function update(Request $request, $uid)
     {
         $user = User::where('uid', '=', $uid)->first();

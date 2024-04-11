@@ -20,7 +20,7 @@ class DialerAudioController extends Controller
         } else {
             $user = auth()->user()->id;
         }
-        $audio = Dialer_audio::where('id_parent', '=', $user)->get();
+        $audio = Dialer_audio::where('id_parent', '=', $user)->orderBy('id', 'DESC')->get();
 
         return response()->json([
             'status' => true,
