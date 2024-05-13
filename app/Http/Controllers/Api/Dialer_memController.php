@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
+use Exception;
+use App\Models\User;
+use Ramsey\Uuid\Uuid;
+use App\Models\Sippeers;
 use Illuminate\Http\Request;
 use App\Models\Dialer_member;
-use App\Models\User;
-use App\Models\Sippeers;
+use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 
 class Dialer_memController extends Controller
@@ -39,10 +42,9 @@ class Dialer_memController extends Controller
 
     public function store(Request $request)
     {
-        // dd($request->all());
         $rules = [
             'name' => 'required',
-            'password' =>'required',
+            'password' => 'required',
             'username' => 'required',
         ];
 
@@ -57,49 +59,63 @@ class Dialer_memController extends Controller
                 'error' => $messages,
             ], 500);
         }
-        $dialer_member                 = new Dialer_member();
-        $dialer_member->name           = $request->name;
-        $dialer_member->username       = $request->username;
-        $dialer_member->password       = $request->password;
-        $dialer_member->status         = $request->status;
-        $dialer_member->extension      = $request->extension;
-        $dialer_member->exte_pass      = $request->exte_pass;
-        $dialer_member->ring_timeout   = $request->ring_timeout;
-        // $dialer_member->dial_timeout   = @$request->dial_timeout;
-        // $dialer_member->voice_mail     = @$request->voice_mail;
-        // $dialer_member->vs_pass        = @$request->vs_pass;
-        // $dialer_member->email          = @$request->email;
-        $dialer_member->created_by     = \Auth::user()->created_by;
-        $dialer_member->id_parent      = \Auth::user()->id;
-        $dialer_member->save();
 
-        $dialer_member_sippeers              = new Sippeers();
-        $dialer_member_sippeers->id_member   = $dialer_member->id;
-        $dialer_member_sippeers->id_parent   = \Auth::user()->id;
-        $dialer_member_sippeers->name        = $request->extension;
-        $dialer_member_sippeers->defaultuser = $request->extension;
-        $dialer_member_sippeers->secret      = $request->exte_pass;
-        $dialer_member_sippeers->accountcode = $request->extension;
-        $dialer_member_sippeers->callerid    = $request->extension;
-        $dialer_member_sippeers->mailbox     = $request->extension;
-        $dialer_member_sippeers->fromuser    = $request->extension;
-        $dialer_member_sippeers->vmexten     = $request->extension;
-        $dialer_member_sippeers->created_by  = \Auth::user()->created_by;
-        $dialer_member_sippeers->save();
+        try {
+            $dialer_member                 = new Dialer_member();
+            $dialer_member->name           = $request->name;
+            $dialer_member->username       = $request->username;
+            $dialer_member->password       = $request->password;
+            $dialer_member->status         = $request->status;
+            $dialer_member->extension      = $request->extension;
+            $dialer_member->exte_pass      = $request->exte_pass;
+            $dialer_member->ring_timeout   = $request->ring_timeout;
+            $dialer_member->created_by     = \Auth::user()->created_by;
+            $dialer_member->id_parent      = \Auth::user()->id;
+            $dialer_member->save();
 
-        return response()->json([
-            'status' => true,
-            'data' => $dialer_member,
-            'Sippeers' => $dialer_member_sippeers,
-            'message' => "Member Successfully Created.",
-        ]);
+            $user      = new User();
+            $user->name        = $request->name;
+            $user->email       = $request->username;
+            $user->role        = "MEMBER";
+            $user->uid         = Uuid::uuid4()->toString();
+            $user->password    = bcrypt($request->password);
+            $user->created_by  = \Auth::user()->id;
+            $user->save();
+
+            $dialer_member_sippeers              = new Sippeers();
+            $dialer_member_sippeers->id_member   = $dialer_member->id;
+            $dialer_member_sippeers->id_parent   = \Auth::user()->id;
+            $dialer_member_sippeers->name        = $request->extension;
+            $dialer_member_sippeers->defaultuser = $request->extension;
+            $dialer_member_sippeers->secret      = $request->exte_pass;
+            $dialer_member_sippeers->accountcode = $request->extension;
+            $dialer_member_sippeers->callerid    = $request->extension;
+            $dialer_member_sippeers->mailbox     = $request->extension;
+            $dialer_member_sippeers->fromuser    = $request->extension;
+            $dialer_member_sippeers->vmexten     = $request->extension;
+            $dialer_member_sippeers->created_by  = \Auth::user()->created_by;
+            $dialer_member_sippeers->save();
+            return response()->json([
+                'status' => true,
+                'data' => $dialer_member,
+                'Sippeers' => $dialer_member_sippeers,
+                'user' => $user,
+                'message' => "Member Successfully Created.",
+            ]);
+        } catch (Exception $ex) {
+            $rorf = Log::error('' . $ex->getMessage());
+            return response()->json([
+                'status' => true,
+                'message' => $ex,
+            ], 500);
+        }
     }
 
     public function update(Request $request, $id)
     {
         $member = Dialer_member::find($id);
         $sippeers = Sippeers::where('id_member', $id)->first();
-
+        $user = User::where('email', $member->username)->first();
         if (!empty($member)) {
             if (!empty($sippeers)) {
                 $rules = [
@@ -122,36 +138,46 @@ class Dialer_memController extends Controller
                         'error' => $messages,
                     ]);
                 }
+                try {
+                    $member->name           = $request->name;
+                    $member->username       = $request->username;
+                    $member->password       = $request->password;
+                    $member->status         = $request->status;
+                    $member->extension      = $request->extension;
+                    $member->exte_pass      = $request->exte_pass;
+                    $member->ring_timeout   = $request->ring_timeout;
+                    $member->save();
 
-                $member->name           = $request->name;
-                $member->username       = $request->username;
-                $member->password       = $request->password;
-                $member->status         = $request->status;
-                $member->extension      = $request->extension;
-                $member->exte_pass      = $request->exte_pass;
-                $member->ring_timeout   = $request->ring_timeout;
-                // $member->dial_timeout   = @$request->dial_timeout;
-                // $member->voice_mail     = @$request->voice_mail;
-                // $member->vs_pass        = @$request->vs_pass;
-                // $member->email          = @$request->email;
-                $member->save();
+                    $user->name        = $request->name;
+                    $user->email       = $request->username;
+                    $user->role        = "MEMBER";
+                    $user->password    = bcrypt($request->password);
+                    $user->save();
 
-                $sippeers->name           = $request->extension;
-                $sippeers->secret         = $request->exte_pass;
-                $sippeers->defaultuser    = $request->extension;
-                $sippeers->accountcode    = $request->extension;
-                $sippeers->callerid       = $request->extension;
-                $sippeers->mailbox        = $request->extension;
-                $sippeers->fromuser       = $request->extension;
-                $sippeers->vmexten        = $request->extension;
-                $sippeers->save();
+                    $sippeers->name           = $request->extension;
+                    $sippeers->secret         = $request->exte_pass;
+                    $sippeers->defaultuser    = $request->extension;
+                    $sippeers->accountcode    = $request->extension;
+                    $sippeers->callerid       = $request->extension;
+                    $sippeers->mailbox        = $request->extension;
+                    $sippeers->fromuser       = $request->extension;
+                    $sippeers->vmexten        = $request->extension;
+                    $sippeers->save();
 
-                return response()->json([
-                    'status' => true,
-                    'data' => @$member,
-                    'Sippeers' => @$sippeers,
-                    'message' => "Member Successfully updated.",
-                ]);
+                    return response()->json([
+                        'status' => true,
+                        'data' => @$member,
+                        'Sippeers' => @$sippeers,
+                        'user' => @$user,
+                        'message' => "Member Successfully updated.",
+                    ]);
+                } catch (Exception $ex) {
+                    $rorf = Log::error('' . $ex->getMessage());
+                    return response()->json([
+                        'status' => true,
+                        'message' => $ex,
+                    ], 500);
+                }
             } else {
                 return response()->json([
                     'status' => true,
@@ -169,9 +195,11 @@ class Dialer_memController extends Controller
     public function delete($id)
     {
         $member = Dialer_member::find($id);
+        $user = User::where('email', $member->username)->first();
         $sippeers = Sippeers::where('id_member', $id)->first();
         if (!empty($member)) {
             $member->delete();
+            $user->delete();
             $sippeers->delete();
 
             return response()->json([
@@ -209,5 +237,26 @@ class Dialer_memController extends Controller
             'data' => $sippeers,
             'message' => "Sippeers Successfully Get.",
         ]);
+    }
+    public function change_status($id)
+    {
+        $member = Dialer_member::find($id);
+        if (!empty($member)) {
+            if ($member->status === 'Active') {
+                $member->status = "Inactive";
+                $member->save();
+                return response()->json([
+                    'status' => true,
+                    'message' => "Member Staus Successfully chenge.",
+                ]);
+            } else {
+                $member->status = "Active";
+                $member->save();
+                return response()->json([
+                    'status' => true,
+                    'message' => "Member Staus Successfully chenge.",
+                ]);
+            }
+        }
     }
 }

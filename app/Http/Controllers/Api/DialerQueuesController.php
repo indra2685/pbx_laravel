@@ -75,12 +75,17 @@ class DialerQueuesController extends Controller
             ], 500);
         }
         try {
-            $_members = Dialer_member::whereIn('id', $request->selectedMemberId)->pluck('name')->toArray();
+            $_members = Dialer_member::whereIn('id', $request->selectedMemberId)->pluck('name', 'extension')->toArray();
 
             $member = [];
+
+            foreach ($_members as $extension => $name) {
+                $member[] = "$name ($extension)";
+            }
+
             $queues                 = new Dialer_queues();
             $queues->name           = $request->name;
-            $queues['member']       = implode(',', $_members);
+            $queues['member']       = implode(',', $member);
             // $queues->member         = $request->selectedMemberId;
             $queues->ivr_message    = $request->ivr_message;
             $queues->strategy       = $request->strategy;
@@ -152,11 +157,14 @@ class DialerQueuesController extends Controller
                 ], 500);
             }
             try {
-                $_members = Dialer_member::whereIn('id', $request->selectedMemberId)->pluck('name')->toArray();
+                $_members = Dialer_member::whereIn('id', $request->selectedMemberId)->pluck('name','extension')->toArray();
 
                 $member = [];
+                foreach ($_members as $extension => $name) {
+                    $member[] = "$name ($extension)";
+                }
                 $queues->name           = $request->name;
-                $queues['member']       = implode(',', $_members);
+                $queues['member']       = implode(',',$member);
                 $queues->ivr_message    = $request->ivr_message;
                 $queues->strategy       = $request->strategy;
                 $queues->moh_pro        = $request->moh_pro;

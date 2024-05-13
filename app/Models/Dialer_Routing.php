@@ -13,6 +13,7 @@ class Dialer_Routing extends Model
         'id_parent',
         'queue_id',
         'prefix',
+        'route_name',
         'status',
         'created_by'
     ];

@@ -63,6 +63,7 @@ class DialerRoutingController extends Controller
         }
 
         $routing = new Dialer_Routing();
+        $routing->route_name = $request->route_name;
         $routing->queuq_id = $request->queuq_id;
         $routing->prefix = $request->prefix;
         $routing->id_parent = \Auth::user()->id;
@@ -94,7 +95,7 @@ class DialerRoutingController extends Controller
                 "message" => "All field required.$messages",
             ]);
         }
-
+        $routing->route_name = $request->route_name;
         $routing->queuq_id = $request->queuq_id;
         $routing->prefix = $request->prefix;
         $routing->save();

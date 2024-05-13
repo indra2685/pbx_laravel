@@ -55,6 +55,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('member/delete/{id}', [Dialer_memController::class, 'delete']);
     Route::get('sippeers/get/{uid?}', [Dialer_memController::class, 'sippeers_get']);
     Route::get('sippeers/show/{id}', [Dialer_memController::class, 'sippeers_show']);
+    Route::get('member/status/{id}', [Dialer_memController::class, 'change_status']);
 
     // Dialer Caller-id api
     Route::get('caller-id/get/{uid?}', [DialerCalleridController::class, 'index']);

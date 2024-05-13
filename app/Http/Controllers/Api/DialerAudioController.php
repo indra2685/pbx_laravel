@@ -58,6 +58,8 @@ class DialerAudioController extends Controller
         $filePath = $request->file('file_name')->storeAs('/', $fileName, 'audio');
         $audio = new Dialer_audio();
         $audio->name = $request->name;
+        $audio->prefix = $request->prefix;
+        $audio->time_out = $request->time_out;
         $audio->file_name = url('/audio/' . $filePath);
         $audio->id_parent = \Auth::user()->id;
         $audio->created_by = \Auth::user()->created_by;
@@ -102,6 +104,8 @@ class DialerAudioController extends Controller
             $audio->file_name = url('/audio/' . $filePath);
         }
         $audio->name = $request->name;
+        $audio->prefix = $request->prefix;
+        $audio->time_out = $request->time_out;
         $audio->save();
 
         return response()->json([

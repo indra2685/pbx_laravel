@@ -12,6 +12,8 @@ class Dialer_audio extends Model
     protected $fillable = [
         'id_parent',
         'name',
+        'time_out',
+        'prefix',
         'file_name',
         'created_by'
     ];
