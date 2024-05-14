@@ -40,7 +40,6 @@ class DialerAudioController extends Controller
     }
     public function store(Request $request)
     {
-        // dd($request->all());
         $rules = [
             'name' => 'required',
             'file_name' => 'required|file|mimes:audio/mpeg,mpga,mp3,wav,aac'
@@ -54,13 +53,15 @@ class DialerAudioController extends Controller
                 "message" => "All field required.$messages",
             ]);
         }
-        $fileName = time() . '_' . $request->file_name->getClientOriginalName();
-        $filePath = $request->file('file_name')->storeAs('/', $fileName, 'audio');
         $audio = new Dialer_audio();
         $audio->name = $request->name;
         $audio->prefix = $request->prefix;
         $audio->time_out = $request->time_out;
-        $audio->file_name = url('/audio/' . $filePath);
+        if(!empty($request->file_name)){
+            $fileName = time() . '_' . $request->file_name->getClientOriginalName();
+            $filePath = $request->file('file_name')->storeAs('/', $fileName, 'audio');
+            $audio->file_name = url('/audio/'.$filePath);
+        }
         $audio->id_parent = \Auth::user()->id;
         $audio->created_by = \Auth::user()->created_by;
         $audio->save();
@@ -78,7 +79,6 @@ class DialerAudioController extends Controller
 
         if (!empty($request->file_name)) {
             $rules = [
-                'name' => 'required',
                 'file_name' => 'required|file|mimes:audio/mpeg,mpga,mp3,wav,aac'
             ];
             $validator = Validator::make($request->all(), $rules);
@@ -101,7 +101,7 @@ class DialerAudioController extends Controller
                 \File::delete(public_path($trimmedUrls));
             }
 
-            $audio->file_name = url('/audio/' . $filePath);
+            $audio->file_name = url('/audio/'.$filePath);
         }
         $audio->name = $request->name;
         $audio->prefix = $request->prefix;
