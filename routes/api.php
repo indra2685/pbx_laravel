@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\AgentController;
+use App\Http\Controllers\API\DashboardController;
 use App\Http\Controllers\Api\RegisterController;
 use App\Http\Controllers\Api\IpAddressController;
 use App\Http\Controllers\Api\Dialer_memController;
@@ -103,4 +104,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('ip_address/store', [IpAddressController::class, 'store']);
     Route::post('ip_address/update/{id}', [IpAddressController::class, 'update']);
     Route::delete('ip_address/delete/{id}', [IpAddressController::class, 'delete']);
+
+    // Dashboard count api
+    Route::get('count/get', [DashboardController::class, 'count']);
+    Route::get('donut_chart/get', [DashboardController::class, 'donut_chart']);
+    Route::get('group_list/get', [DashboardController::class, 'group_list']);
 });
