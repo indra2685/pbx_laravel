@@ -57,12 +57,16 @@ class DashboardController extends Controller
                 }
                 $memb[] = [
                     'group_name'=>$mem->name,
-                    'member'=>count($result)
+                    'member'=>count($result),
+                    'live_calls' => 0,
+                    'calls' => 0
                 ];
             } else {
                 $memb[] = [
                     'group_name'=>$mem->name,
-                    'member'=> 0
+                    'member'=> 0,
+                    'live_calls' => 0,
+                    'calls' => 0
                 ];
             }
         }

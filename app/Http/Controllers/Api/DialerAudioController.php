@@ -42,7 +42,7 @@ class DialerAudioController extends Controller
     {
         $rules = [
             'name' => 'required',
-            'file_name' => 'required|file|mimes:audio/mpeg,mpga,mp3,wav,aac'
+            'file_name' => 'required|file|mimes:audio/mp3,wav'
         ];
         $validator = Validator::make($request->all(), $rules);
         if ($validator->fails()) {
@@ -79,7 +79,7 @@ class DialerAudioController extends Controller
 
         if (!empty($request->file_name)) {
             $rules = [
-                'file_name' => 'required|file|mimes:audio/mpeg,mpga,mp3,wav,aac'
+                'file_name' => 'required|file|mimes:audio/mp3,wav'
             ];
             $validator = Validator::make($request->all(), $rules);
             if ($validator->fails()) {

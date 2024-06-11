@@ -29,6 +29,16 @@ class Dialer_memController extends Controller
             'message' => "Member Successfully Get.",
         ]);
     }
+    public function queue()
+    {
+        $user = auth()->user()->id;
+        $member = Dialer_member::where('id_parent', '=', $user)->where('queue_status', '!=', '1')->orderBy('id', 'DESC')->get();
+        return response()->json([
+            'status' => true,
+            'data' => $member,
+            'message' => "Member Successfully Get.",
+        ]);
+    }
     public function show($id)
     {
         $member = Dialer_member::find($id);
@@ -68,6 +78,7 @@ class Dialer_memController extends Controller
             $dialer_member->status         = $request->status;
             $dialer_member->extension      = $request->extension;
             $dialer_member->exte_pass      = $request->exte_pass;
+            $dialer_member->queue_status   = 0;
             $dialer_member->ring_timeout   = $request->ring_timeout;
             $dialer_member->created_by     = \Auth::user()->created_by;
             $dialer_member->id_parent      = \Auth::user()->id;
@@ -77,6 +88,8 @@ class Dialer_memController extends Controller
             $user->name        = $request->name;
             $user->email       = $request->username;
             $user->role        = "MEMBER";
+            $user->extension   = $request->extension;
+            $user->exte_pass   = $request->exte_pass;
             $user->uid         = Uuid::uuid4()->toString();
             $user->password    = bcrypt($request->password);
             $user->created_by  = \Auth::user()->id;
@@ -151,6 +164,8 @@ class Dialer_memController extends Controller
                     $user->name        = $request->name;
                     $user->email       = $request->username;
                     $user->role        = "MEMBER";
+                    $user->extension   = $request->extension;
+                    $user->exte_pass   = $request->exte_pass;
                     $user->password    = bcrypt($request->password);
                     $user->save();
 
@@ -247,14 +262,14 @@ class Dialer_memController extends Controller
                 $member->save();
                 return response()->json([
                     'status' => true,
-                    'message' => "Member Staus Successfully chenge.",
+                    'message' => "Member Status Successfully chenge.",
                 ]);
             } else {
                 $member->status = "Active";
                 $member->save();
                 return response()->json([
                     'status' => true,
-                    'message' => "Member Staus Successfully chenge.",
+                    'message' => "Member Status Successfully chenge.",
                 ]);
             }
         }

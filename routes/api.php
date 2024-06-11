@@ -50,6 +50,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Dialer Member
     Route::get('member/get/{uid?}', [Dialer_memController::class, 'index']);
+    Route::get('member/queue', [Dialer_memController::class, 'queue']);
     Route::get('member/show/{id}', [Dialer_memController::class, 'show']);
     Route::post('member/store', [Dialer_memController::class, 'store']);
     Route::post('member/update/{id}', [Dialer_memController::class, 'update']);

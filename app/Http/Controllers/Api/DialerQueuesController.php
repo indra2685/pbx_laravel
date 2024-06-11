@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use App\Models\Dialer_member;
 use App\Models\Dialer_queues;
+use App\Models\Queue_Member;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use App\Models\Dialer_queues_member;
@@ -105,11 +106,9 @@ class DialerQueuesController extends Controller
             $queues->per_ann        = $request->per_ann;
             $queues->per_ann_pro    = $request->per_ann_pro;
             $queues->created_by     = \Auth::user()->created_by;
-
             $queues->save();
-            // $mem_str = json_decode($request->selectedMemberId);
-            foreach ($request->selectedMemberId as $member) {
 
+            foreach ($request->selectedMemberId as $member) {
                 $dialer_member = Dialer_member::find($member);
                 if ($dialer_member != null) {
                     $queues_mem = new Dialer_queues_member;
@@ -119,6 +118,16 @@ class DialerQueuesController extends Controller
                     $queues_mem->created_by = \Auth::user()->created_by;
                     $queues_mem->save();
                 }
+            }
+            foreach ($request->selectedMemberId as $que_mem) {
+                $qumem = Dialer_member::where('id', $que_mem)->first();
+                $qumem->queue_status = 1;
+                $qumem->save();
+
+                $queu_mem = new Queue_Member;
+                $queu_mem->queue_id = $queues->name;
+                $queu_mem->member_id = $que_mem;
+                $queu_mem->save();
             }
 
             return response()->json([
@@ -137,8 +146,8 @@ class DialerQueuesController extends Controller
 
     public function update(Request $request, $name)
     {
-        // dd($request->all());
         $queues = Dialer_queues::where('name', 'like', $name)->first();
+        $que_mem = Queue_Member::where('queue_id', $queues->name)->get();
         Dialer_queues_member::where('queue_name', 'like', $name)->delete();
         if (!empty($queues)) {
             $rules = [
@@ -157,14 +166,14 @@ class DialerQueuesController extends Controller
                 ], 500);
             }
             try {
-                $_members = Dialer_member::whereIn('id', $request->selectedMemberId)->pluck('name','extension')->toArray();
+                $_members = Dialer_member::whereIn('id', $request->selectedMemberId)->pluck('name', 'extension')->toArray();
 
                 $member = [];
                 foreach ($_members as $extension => $name) {
                     $member[] = "$name ($extension)";
                 }
                 $queues->name           = $request->name;
-                $queues['member']       = implode(',',$member);
+                $queues['member']       = implode(',', $member);
                 $queues->ivr_message    = $request->ivr_message;
                 $queues->strategy       = $request->strategy;
                 $queues->moh_pro        = $request->moh_pro;
@@ -182,7 +191,6 @@ class DialerQueuesController extends Controller
                 $queues->per_ann_pro    = $request->per_ann_pro;
                 $queues->save();
 
-
                 foreach ($request->selectedMemberId as $member) {
                     $dialer_member = Dialer_member::find($member);
                     if ($dialer_member != null) {
@@ -192,6 +200,40 @@ class DialerQueuesController extends Controller
                         $queues_mem->interface = 'SIP/' . $dialer_member->extension;
                         $queues_mem->created_by = \Auth::user()->created_by;
                         $queues_mem->save();
+                    }
+                }
+                $memb_id = [];
+                foreach ($que_mem as $mem_id) {
+                    $memb_id[] = $mem_id->member_id;
+                }
+
+                foreach ($memb_id as $aa) {
+                    if (in_array($aa, $request->selectedMemberId)) {
+                    } else {
+                        $qumem = Dialer_member::where('id', $aa)->first();
+                        $qumem->queue_status = 0;
+                        $qumem->save();
+
+                        $qq = Queue_Member::where('member_id', $aa)->first();
+                        $qq->delete();
+                    }
+                }
+
+                foreach ($request->selectedMemberId as $mem_status) {
+
+                    if (in_array($mem_status, $memb_id)) {
+                        $qumems = Queue_Member::where('member_id', $mem_status)->first();
+                        $qumems->queue_id = $queues->name;
+                        $qumems->save();
+                    } else {
+                        $qumems = Dialer_member::where('id', $mem_status)->first();
+                        $qumems->queue_status = 1;
+                        $qumems->save();
+
+                        $queu_mem = new Queue_Member;
+                        $queu_mem->queue_id = $queues->name;
+                        $queu_mem->member_id = $mem_status;
+                        $queu_mem->save();
                     }
                 }
                 return response()->json([
@@ -217,20 +259,26 @@ class DialerQueuesController extends Controller
     {
         $queues = Dialer_queues::where('name', 'LIKE', $name)->first();
         $queues_name = Dialer_queues_member::where('queue_name', 'LIKE', $name)->first();
+
         if (!empty($queues)) {
-            if (!empty($queues_name)) {
-                $queues->delete();
-                $queues_name->delete();
-                return response()->json([
-                    'status' => true,
-                    'message' => "Queues Successfully deleted.",
-                ]);
-            } else {
-                return response()->json([
-                    'status' => true,
-                    'message' => "Queues_member not found.",
-                ], 500);
+            $qumems = Queue_Member::where('queue_id', $queues->name)->get();
+            foreach ($qumems as $mem_id) {
+                $id = $mem_id->member_id;
+                $qumem = Dialer_member::where('id', $id)->first();
+                $qumem->queue_status = 0;
+                $qumem->save();
+ 
+                $mmm = Queue_Member::where('member_id', $id)->first();
+                $mmm->delete();
             }
+            $queues->delete();
+            if (!empty($queues_name)) {
+                $queues_name->delete();
+            }
+            return response()->json([
+                'status' => true,
+                'message' => "Queues Successfully deleted.",
+            ]);
         } else {
             return response()->json([
                 'status' => true,
