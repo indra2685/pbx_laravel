@@ -4,7 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\AgentController;
-use App\Http\Controllers\API\DashboardController;
+use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\RegisterController;
 use App\Http\Controllers\Api\IpAddressController;
 use App\Http\Controllers\Api\Dialer_memController;
