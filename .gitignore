@@ -18,6 +18,13 @@ yarn-error.log
 /.fleet
 /.idea
 /.vscode
+/storage
+/.env
+.env
 /storage/framework/*
 /storage/logs/*
-/storage
+storage
+storage/
+storage/*
+/storage/
+/storage/*

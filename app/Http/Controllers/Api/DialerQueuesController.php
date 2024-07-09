@@ -81,7 +81,7 @@ class DialerQueuesController extends Controller
             $member = [];
 
             foreach ($_members as $extension => $name) {
-                $member[] = "$name ($extension)";
+                $member[] = "$extension";
             }
 
             $queues                 = new Dialer_queues();
@@ -170,7 +170,7 @@ class DialerQueuesController extends Controller
 
                 $member = [];
                 foreach ($_members as $extension => $name) {
-                    $member[] = "$name ($extension)";
+                    $member[] = "$extension";
                 }
                 $queues->name           = $request->name;
                 $queues['member']       = implode(',', $member);
