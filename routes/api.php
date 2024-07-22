@@ -2,11 +2,13 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\CDRController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\AgentController;
-use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\RegisterController;
+use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\IpAddressController;
+use App\Http\Controllers\Api\LiveCallsController;
 use App\Http\Controllers\Api\Dialer_memController;
 use App\Http\Controllers\Api\DialerAudioController;
 use App\Http\Controllers\Api\DialerQueuesController;
@@ -110,4 +112,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('count/get', [DashboardController::class, 'count']);
     Route::get('donut_chart/get', [DashboardController::class, 'donut_chart']);
     Route::get('group_list/get', [DashboardController::class, 'group_list']);
+    
+    
+    Route::get('live/calls', [LiveCallsController::class, 'index']);
+    Route::post('cdr/details', [CDRController::class, 'index']);
 });

@@ -7,7 +7,6 @@ use Illuminate\Http\Request;
 use App\Models\Queue_filter;
 use App\Models\Ip_address;
 use App\Models\User;
-use Illuminate\Support\Facades\Validator;
 
 class IpAddressController extends Controller
 {
