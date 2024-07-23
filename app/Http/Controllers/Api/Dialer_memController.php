@@ -210,9 +210,9 @@ class Dialer_memController extends Controller
     public function delete($id)
     {
         $member = Dialer_member::find($id);
+        if (!empty($member)) {
         $user = User::where('email', $member->username)->first();
         $sippeers = Sippeers::where('id_member', $id)->first();
-        if (!empty($member)) {
             $member->delete();
             $user->delete();
             $sippeers->delete();
@@ -234,9 +234,9 @@ class Dialer_memController extends Controller
         $user_is = $request->id;
         foreach ($user_is as $id) {
             $member = Dialer_member::find($id);
+            if (!empty($member)) {
             $user = User::where('email', $member->username)->first();
             $sippeers = Sippeers::where('id_member', $id)->first();
-            if (!empty($member)) {
                 $member->delete();
                 $user->delete();
                 $sippeers->delete();
