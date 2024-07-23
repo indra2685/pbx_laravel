@@ -57,6 +57,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('member/store', [Dialer_memController::class, 'store']);
     Route::post('member/update/{id}', [Dialer_memController::class, 'update']);
     Route::delete('member/delete/{id}', [Dialer_memController::class, 'delete']);
+    Route::post('member/multi_delete', [Dialer_memController::class, 'multi_delete']);
     Route::get('sippeers/get/{uid?}', [Dialer_memController::class, 'sippeers_get']);
     Route::get('sippeers/show/{id}', [Dialer_memController::class, 'sippeers_show']);
     Route::get('member/status/{id}', [Dialer_memController::class, 'change_status']);

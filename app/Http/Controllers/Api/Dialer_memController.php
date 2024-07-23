@@ -228,6 +228,26 @@ class Dialer_memController extends Controller
             ], 500);
         }
     }
+
+    public function multi_delete(Request $request)
+    {
+        $user_is = $request->id;
+        foreach ($user_is as $id) {
+            $member = Dialer_member::find($id);
+            $user = User::where('email', $member->username)->first();
+            $sippeers = Sippeers::where('id_member', $id)->first();
+            if (!empty($member)) {
+                $member->delete();
+                $user->delete();
+                $sippeers->delete();
+            }
+        }
+        return response()->json([
+            'status' => true,
+            'message' => "Dialer Successfully deleted.",
+        ]);
+    }
+
     public function sippeers_get($uid = null)
     {
         if (!empty($uid)) {
