@@ -42,7 +42,6 @@ class UserController extends Controller
     public function update(Request $request, $uid)
     {
         $user = User::where('uid', '=', $uid)->first();
-
         $user->name  = $request->name;
         $user->email = $request->email;
         $user->dob   = $request->dob;

@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use Illuminate\Http\Request;
 use App\Models\Dialer_Routing;
-use App\Models\Dialer_queues;
+use App\Models\Dialer_group;
 use App\Models\User;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
@@ -22,7 +22,7 @@ class DialerRoutingController extends Controller
         $routings = Dialer_Routing::where('id_parent', '=', $user)->orderBy('id', 'DESC')->get();
         $queue_name = '';
         foreach ($routings as $r) {
-            @$queue_id = Dialer_queues::where('id', '=', $r->queuq_id)->first();
+            @$queue_id = Dialer_group::where('id', '=', $r->queuq_id)->first();
             @$queue_name = $queue_id->name;
             $r['queue_name'] = $queue_name;
         }
@@ -49,7 +49,7 @@ class DialerRoutingController extends Controller
     {
 
         $rules = [
-            'queuq_id' => 'required',
+            'route_name' => 'required',
             'prefix' => 'required'
         ];
         $validator = Validator::make($request->all(), $rules);
@@ -64,8 +64,10 @@ class DialerRoutingController extends Controller
 
         $routing = new Dialer_Routing();
         $routing->route_name = $request->route_name;
-        $routing->queuq_id = $request->queuq_id;
+        $routing->property_type = $request->property_type;
+        $routing->property_id = $request->property_id;
         $routing->prefix = $request->prefix;
+        $routing->status = $request->status;
         $routing->id_parent = \Auth::user()->id;
         $routing->created_by = \Auth::user()->created_by;
         $routing->save();
@@ -83,7 +85,7 @@ class DialerRoutingController extends Controller
 
 
         $rules = [
-            'queuq_id' => 'required',
+            'route_name' => 'required',
             'prefix' => 'required'
         ];
         $validator = Validator::make($request->all(), $rules);
@@ -96,8 +98,10 @@ class DialerRoutingController extends Controller
             ]);
         }
         $routing->route_name = $request->route_name;
-        $routing->queuq_id = $request->queuq_id;
+        $routing->property_type = $request->property_type;
+        $routing->property_id = $request->property_id;
         $routing->prefix = $request->prefix;
+        $routing->status = $request->status;
         $routing->save();
 
         return response()->json([

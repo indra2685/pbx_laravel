@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Base_Calls;
 use App\Models\Dialer_cdr;
 use App\Models\Dialer_member;
-use App\Models\Dialer_queues;
+use App\Models\Dialer_group;
 use App\Models\User;
 use Illuminate\Support\Carbon;
 use App\Http\Controllers\Controller as Controller;
@@ -18,7 +18,7 @@ class DashboardController extends Controller
         $base_call = Base_Calls::count();
         $cdr = Dialer_cdr::count();
         $mem = Dialer_member::where('status', '=', 'Active')->count();
-        $queuq = Dialer_queues::count();
+        $queuq = Dialer_group::count();
         $user = User::where('role', '=', 'MEMBER')->count();
         return response()->json([
             'status' => true,
@@ -45,7 +45,7 @@ class DashboardController extends Controller
 
     public function group_list()
     {
-        $group_member = Dialer_queues::all();
+        $group_member = Dialer_group::all();
         $memb = [];
         foreach ($group_member as $k => $mem) {
             if (!empty($mem->member)) {

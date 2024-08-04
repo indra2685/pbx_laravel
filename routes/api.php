@@ -71,7 +71,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Dialer queues api
     Route::get('queues/get/{uid?}', [DialerQueuesController::class, 'index']);
-    Route::get('queues/show/{id}', [DialerQueuesController::class, 'show']);
+    // Route::get('queues/show/{id}', [DialerQueuesController::class, 'show']);
     Route::post('queues/store', [DialerQueuesController::class, 'store']);
     Route::post('queues/update/{name}', [DialerQueuesController::class, 'update']);
     Route::delete('queues/delete/{name}', [DialerQueuesController::class, 'delete']);

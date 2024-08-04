@@ -5,8 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Queue_Member extends Model
+class Group_Member extends Model
 {
     use HasFactory;
-    protected $table = 'queue_member';
+    protected $table = 'group_member';
 }

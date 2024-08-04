@@ -17,7 +17,7 @@ class Queue_filter extends Model
         'created_by'
     ];
     public function queue_name() {
-        return $this->hasOne('App\Models\Dialer_queues', 'id', 'queues_id');
+        return $this->hasOne('App\Models\Dialer_group', 'id', 'queues_id');
     }
 
 }
