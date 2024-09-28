@@ -90,6 +90,7 @@ class DialerQueuesController extends Controller
             $queues                 = new Dialer_group();
             $queues->group_name     = $request->name;
             $queues->id_parent      = \Auth::user()->id;
+            $queues->type           =  "group";
             $queues->status         = $request->status;
             $queues->save();
 
@@ -148,6 +149,7 @@ class DialerQueuesController extends Controller
                 //     $member[] = "$extension";
                 // }
                 $queues->group_name           = $request->name;
+               // $queues->type           =  "group";
                 $queues->status               = $request->status;
                 $queues->save();
 
@@ -163,8 +165,8 @@ class DialerQueuesController extends Controller
                         $qumem->group_id = 0;
                         $qumem->save();
 
-                        $qq = Group_Member::where('member_id', $aa)->first();
-                        $qq->delete();
+                        $qq = Group_Member::where('member_id', $aa)->delete();
+                        // $qq->delete();
                     }
                 }
 

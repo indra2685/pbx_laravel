@@ -12,6 +12,7 @@ class Dialer_group extends Model
     protected $table = 'dialer_groups';
     protected $fillable = [
         'id_parent',
+        'type',
         'group_name',
         'status'
     ];

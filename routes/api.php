@@ -84,6 +84,14 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('audio/update/{id}', [DialerAudioController::class, 'update']);
     Route::delete('audio/delete/{id}', [DialerAudioController::class, 'delete']);
 
+    // Dialer audio_group api
+    Route::get('audio_group/get/{uid?}', [DialerAudioController::class, 'get_groups']);
+    Route::get('audio_group/show/{group_id}', [DialerAudioController::class, 'show_group']);
+    Route::post('audio_group/store', [DialerAudioController::class, 'store_audio_group']);
+    Route::post('audio_group/update/{group_id}', [DialerAudioController::class, 'update_audio_group']);
+    Route::delete('audio_group/delete/{group_id}', [DialerAudioController::class, 'delete_group']);
+    Route::delete('audio_group/single_delete/{audio_id}', [DialerAudioController::class, 'delete_single_audio']);
+
     // Dialer queues_filter api
     Route::get('queues_filter/get/{uid?}', [Queues_FilterController::class, 'index']);
     Route::get('queues_filter/show/{id}', [Queues_FilterController::class, 'show']);
@@ -113,8 +121,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('count/get', [DashboardController::class, 'count']);
     Route::get('donut_chart/get', [DashboardController::class, 'donut_chart']);
     Route::get('group_list/get', [DashboardController::class, 'group_list']);
-    
-    
+
+
     Route::get('live/calls', [LiveCallsController::class, 'index']);
     Route::post('cdr/details', [CDRController::class, 'index']);
 });
