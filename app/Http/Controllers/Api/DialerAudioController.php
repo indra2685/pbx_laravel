@@ -46,7 +46,7 @@ class DialerAudioController extends Controller
     {
         $rules = [
             'name' => 'required',
-            'file_name' => 'required|file|mimes:mp3,wav|mimetypes:audio/mpeg,audio/wav',
+          'file_name' => 'required|file|mimes:mp3,wav',
         ];
         $validator = Validator::make($request->all(), $rules);
         if ($validator->fails()) {
